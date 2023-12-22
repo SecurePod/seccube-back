@@ -13,7 +13,7 @@ var (
 	ctx    = context.Background()
 	cli, _ = CreateDockerClient()
 
-	httpd = NewContainerService(
+	httpd = NewContainerWithConfig(
 		&container.Config{
 			Tty:   true,
 			Image: "httpd",
@@ -47,13 +47,12 @@ var (
 func TestCreate(t *testing.T) {
 	for _, container := range ContainerList {
 		t.Run("create container", func(t *testing.T) {
-			ctx := context.Background()
-			id, err := container.CreateContainer(ctx)
+			id, err := container.CreateContainer(ctx, cli)
 			fmt.Println(id)
 			if err != nil {
 				t.Error(err)
 			}
-			err = container.DeleteContainer(ctx, *id)
+			err = container.DeleteContainer(ctx, cli, *id)
 			if err != nil {
 				t.Error(err)
 			}
