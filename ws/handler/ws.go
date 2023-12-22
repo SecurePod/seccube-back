@@ -20,7 +20,12 @@ var (
 )
 
 func WsHandler(w http.ResponseWriter, r *http.Request) {
-	c := container.NewContainerService(nil, nil, nil, nil)
+	cli, err := container.CreateDockerClient()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	c := container.NewContainerWithConfig(nil, nil, nil, nil)
 	sub := strings.TrimPrefix(r.URL.Path, "/web-socket/ssh")
 	_, id := filepath.Split(sub)
 	fmt.Println(id)
@@ -35,7 +40,7 @@ func WsHandler(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	res, err := c.CreateExecResponse(ctx, id)
+	res, err := c.CreateExecResponse(ctx, cli, id)
 	if err != nil {
 		log.Println(err)
 		return
