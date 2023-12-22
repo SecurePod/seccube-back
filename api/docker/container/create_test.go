@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/go-connections/nat"
 )
@@ -45,8 +46,13 @@ var (
 )
 
 func TestCreate(t *testing.T) {
+
 	for _, container := range ContainerList {
 		t.Run("create container", func(t *testing.T) {
+			_, err := cli.ImagePull(ctx, "docker.io/library/httpd", types.ImagePullOptions{})
+			if err != nil {
+				t.Error(err)
+			}
 			id, err := container.CreateContainer(ctx, cli)
 			fmt.Println(id)
 			if err != nil {
