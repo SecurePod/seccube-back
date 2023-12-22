@@ -1,6 +1,9 @@
 package container
 
-import "github.com/docker/docker/client"
+import (
+	"github.com/docker/docker/client"
+	"github.com/pkg/errors"
+)
 
 const (
 	dockerClientVersion = "1.42"
@@ -11,5 +14,8 @@ func CreateDockerClient() (cli *client.Client, err error) {
 		client.FromEnv,
 		client.WithVersion(dockerClientVersion),
 	)
+	if err != nil {
+		err = errors.Wrap(err, "create client error")
+	}
 	return
 }
