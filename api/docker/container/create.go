@@ -9,12 +9,13 @@ import (
 )
 
 func (c *ContainerService) CreateContainer(ctx context.Context) (*string, error) {
-	if err := c.CreateDockerClient(); err != nil {
+	cli, err := CreateDockerClient()
+	if err != nil {
 		return nil, errors.Wrap(err, "create client error")
 	}
-	defer c.Client.Close()
+	defer cli.Close()
 
-	create, err := c.Client.ContainerCreate(
+	create, err := cli.ContainerCreate(
 		ctx,
 		c.Config,
 		c.HostConfig,
@@ -27,7 +28,7 @@ func (c *ContainerService) CreateContainer(ctx context.Context) (*string, error)
 	}
 	log.Debug().Str("container", create.ID).Msg("container created")
 
-	err = c.Client.ContainerStart(ctx, create.ID, types.ContainerStartOptions{})
+	err = cli.ContainerStart(ctx, create.ID, types.ContainerStartOptions{})
 	if err != nil {
 		return nil, errors.Wrap(err, "start container error")
 	}

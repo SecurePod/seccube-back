@@ -6,8 +6,8 @@ const (
 	dockerClientVersion = "1.42"
 )
 
-func (c *ContainerService) CreateDockerClient() (err error) {
-	c.Client, err = client.NewClientWithOpts(
+func CreateDockerClient() (cli *client.Client, err error) {
+	cli, err = client.NewClientWithOpts(
 		client.FromEnv,
 		client.WithVersion(dockerClientVersion),
 	)

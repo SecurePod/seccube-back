@@ -9,18 +9,19 @@ import (
 )
 
 func (c *ContainerService) DeleteContainer(ctx context.Context, id string) error {
-	if err := c.CreateDockerClient(); err != nil {
+	cli, err := CreateDockerClient()
+	if err != nil {
 		return errors.Wrap(err, "create client error")
 	}
-	defer c.Client.Close()
+	defer cli.Close()
 
-	err := c.Client.ContainerStop(ctx, id, stop.StopOptions{})
+	err = cli.ContainerStop(ctx, id, stop.StopOptions{})
 	if err != nil {
 		return errors.Wrap(err, "stop container error")
 	}
 
 	if c.HostConfig.AutoRemove != true {
-		err = c.Client.ContainerRemove(ctx, id, types.ContainerRemoveOptions{})
+		err = cli.ContainerRemove(ctx, id, types.ContainerRemoveOptions{})
 		if err != nil {
 			return errors.Wrap(err, "remove container error")
 		}
