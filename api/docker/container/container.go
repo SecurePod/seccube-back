@@ -13,11 +13,37 @@ type ContainerService struct {
 	Platform         *specs.Platform
 }
 
-func NewContainerService(Config *container.Config, HostConfig *container.HostConfig, NetworkingConfig *network.NetworkingConfig, Platform *specs.Platform) *ContainerService {
+// func NewContainerService(id *string) (*ContainerService, error) {
+// 	cli, err := CreateDockerClient()
+// 	return &ContainerService{
+// 		Id:  *id,
+// 		Cli: cli,
+// 	}, err
+// }
+
+func NewContainerWithConfig(config *container.Config, hostConfig *container.HostConfig, networkingConfig *network.NetworkingConfig, platform *specs.Platform) *ContainerService {
 	return &ContainerService{
-		Config:           Config,
-		HostConfig:       HostConfig,
-		NetworkingConfig: NetworkingConfig,
-		Platform:         Platform,
+		Config:           config,
+		HostConfig:       hostConfig,
+		NetworkingConfig: networkingConfig,
+		Platform:         platform,
+	}
+}
+
+type ContainerInformation struct {
+	ID           string
+	ExposedPort  int
+	InternalPort int
+	Ip           string
+	Label        string
+}
+
+func NewContainerInformation(ID string, ExposedPort int, InternalPort int, Ip string, Label string) *ContainerInformation {
+	return &ContainerInformation{
+		ID:           ID,
+		ExposedPort:  ExposedPort,
+		InternalPort: InternalPort,
+		Ip:           Ip,
+		Label:        Label,
 	}
 }
