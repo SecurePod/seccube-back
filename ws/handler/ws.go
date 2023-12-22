@@ -10,8 +10,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/pkg/errors"
-
 	"github.com/gorilla/websocket"
 )
 
@@ -23,10 +21,6 @@ var (
 
 func WsHandler(w http.ResponseWriter, r *http.Request) {
 	c := container.NewContainerService(nil, nil, nil, nil)
-	if err := c.CreateDockerClient(); err != nil {
-		log.Println(errors.Wrap(err, "create client error"))
-		return
-	}
 	sub := strings.TrimPrefix(r.URL.Path, "/web-socket/ssh")
 	_, id := filepath.Split(sub)
 	fmt.Println(id)
