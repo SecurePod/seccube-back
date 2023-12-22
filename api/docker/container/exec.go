@@ -4,16 +4,12 @@ import (
 	"context"
 
 	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/client"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 )
 
-func (c *ContainerService) CreateExecResponse(ctx context.Context, id string) (res types.HijackedResponse, err error) {
-	cli, err := CreateDockerClient()
-	if err != nil {
-		return res, errors.Wrap(err, "create client error")
-	}
-	defer cli.Close()
+func (c *ContainerService) CreateExecResponse(ctx context.Context, cli *client.Client, id string) (res types.HijackedResponse, err error) {
 
 	config := types.ExecConfig{
 		AttachStdin:  true,

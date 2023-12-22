@@ -4,17 +4,12 @@ import (
 	"context"
 
 	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/client"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 )
 
-func (c *ContainerService) CreateContainer(ctx context.Context) (*string, error) {
-	cli, err := CreateDockerClient()
-	if err != nil {
-		return nil, errors.Wrap(err, "create client error")
-	}
-	defer cli.Close()
-
+func (c *ContainerService) CreateContainer(ctx context.Context, cli *client.Client) (*string, error) {
 	create, err := cli.ContainerCreate(
 		ctx,
 		c.Config,

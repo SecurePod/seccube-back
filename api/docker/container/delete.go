@@ -5,17 +5,13 @@ import (
 
 	"github.com/docker/docker/api/types"
 	stop "github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/client"
 	"github.com/pkg/errors"
 )
 
-func (c *ContainerService) DeleteContainer(ctx context.Context, id string) error {
-	cli, err := CreateDockerClient()
-	if err != nil {
-		return errors.Wrap(err, "create client error")
-	}
-	defer cli.Close()
+func (c *ContainerService) DeleteContainer(ctx context.Context, cli *client.Client, id string) error {
 
-	err = cli.ContainerStop(ctx, id, stop.StopOptions{})
+	err := cli.ContainerStop(ctx, id, stop.StopOptions{})
 	if err != nil {
 		return errors.Wrap(err, "stop container error")
 	}
