@@ -10,6 +10,9 @@ import (
 )
 
 var (
+	ctx    = context.Background()
+	cli, _ = CreateDockerClient()
+
 	httpd = NewContainerService(
 		&container.Config{
 			Tty:   true,
@@ -25,6 +28,13 @@ var (
 				},
 			},
 		},
+		// &network.NetworkingConfig{
+		// 	EndpointsConfig: map[string]*network.EndpointSettings{
+		// 		"NetworkIDConfig": {
+		// 			NetworkID: "NetworkID",
+		// 		},
+		// 	},
+		// },
 		nil,
 		nil,
 	)
