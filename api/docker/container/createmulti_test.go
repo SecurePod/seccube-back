@@ -2,7 +2,6 @@ package container
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	. "github.com/docker/docker/api/types/container"
@@ -56,9 +55,14 @@ func TestCreateMultiple(t *testing.T) {
 	for _, container := range ssh {
 		t.Run("create container", func(t *testing.T) {
 			id, err := container.CreateContainer(ctx, cli)
-			fmt.Println(id)
 			if err != nil {
 				t.Error(err)
+				return
+			}
+			err = container.DeleteContainer(ctx, cli, *id)
+			if err != nil {
+				t.Error(err)
+				return
 			}
 		})
 	}
