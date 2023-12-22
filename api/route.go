@@ -17,6 +17,10 @@ func Run() {
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORS())
 
+	e.GET("/health", func(c echo.Context) error {
+		return c.JSON(200, "ok")
+	})
+
 	{
 		docker.InitRoute(e)
 	}
