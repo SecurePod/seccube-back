@@ -49,7 +49,8 @@ func TestCreate(t *testing.T) {
 
 	for _, container := range ContainerList {
 		t.Run("create container", func(t *testing.T) {
-			_, err := cli.ImagePull(ctx, "docker.io/library/httpd", types.ImagePullOptions{})
+			image := container.Config.Image
+			_, err := cli.ImagePull(ctx, image, types.ImagePullOptions{})
 			if err != nil {
 				t.Error(err)
 			}
