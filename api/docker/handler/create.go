@@ -5,7 +5,6 @@ import (
 
 	. "github.com/docker/docker/api/types/container"
 	"github.com/docker/go-connections/nat"
-	"github.com/labstack/echo/v4"
 )
 
 var (
@@ -44,7 +43,3 @@ var (
 		),
 	}
 )
-
-func CreateContainer(c echo.Context) error {
-
-}

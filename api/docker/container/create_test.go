@@ -2,7 +2,6 @@ package container
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	"github.com/docker/docker/api/types"
@@ -14,55 +13,71 @@ var (
 	ctx    = context.Background()
 	cli, _ = CreateDockerClient()
 
-	httpd = NewContainerWithConfig(
-		&container.Config{
-			Tty:   true,
-			Image: "httpd",
-		},
-		&container.HostConfig{
-			AutoRemove: true,
-			PortBindings: nat.PortMap{
-				"80/tcp": []nat.PortBinding{
-					{
-						HostPort: "0",
+	httpd = []*ContainerService{
+		NewContainerWithConfig(
+			&container.Config{
+				Tty:   true,
+				Image: "httpd",
+			},
+			&container.HostConfig{
+				AutoRemove: true,
+				PortBindings: nat.PortMap{
+					"80/tcp": []nat.PortBinding{
+						{
+							HostPort: "0",
+						},
 					},
 				},
 			},
-		},
-		// &network.NetworkingConfig{
-		// 	EndpointsConfig: map[string]*network.EndpointSettings{
-		// 		"NetworkIDConfig": {
-		// 			NetworkID: "NetworkID",
-		// 		},
-		// 	},
-		// },
-		nil,
-		nil,
-	)
+			// &network.NetworkingConfig{
+			// 	EndpointsConfig: map[string]*network.EndpointSettings{
+			// 		"NetworkIDConfig": {
+			// 			NetworkID: "NetworkID",
+			// 		},
+			// 	},
+			// },
+			nil,
+			nil,
+		),
+	}
 
-	ContainerList = map[string]ContainerService{
-		"httpd": *httpd,
+	ContainerList = map[string][]*ContainerService{
+		"httpd":  httpd,
+		"ubuntu": ssh,
 	}
 )
 
-func TestCreate(t *testing.T) {
-
+func TestPull(t *testing.T) {
 	for _, container := range ContainerList {
-		t.Run("create container", func(t *testing.T) {
-			image := container.Config.Image
-			_, err := cli.ImagePull(ctx, image, types.ImagePullOptions{})
-			if err != nil {
-				t.Error(err)
-			}
-			id, err := container.CreateContainer(ctx, cli)
-			fmt.Println(id)
-			if err != nil {
-				t.Error(err)
-			}
-			err = container.DeleteContainer(ctx, cli, *id)
-			if err != nil {
-				t.Error(err)
-			}
-		})
+		for _, c := range container {
+			t.Run("pull image", func(t *testing.T) {
+				_, err := cli.ImagePull(ctx, c.Config.Image, types.ImagePullOptions{})
+				if err != nil {
+					t.Error(err)
+					return
+				}
+			})
+		}
+	}
+}
+
+func TestCreate(t *testing.T) {
+	for _, container := range ContainerList {
+		for _, c := range container {
+			t.Run("create container", func(t *testing.T) {
+				id, err := c.CreateContainer(ctx, cli)
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				t.Log(id)
+				err = c.DeleteContainer(ctx, cli, *id)
+				if err != nil {
+					t.Error(err)
+					return
+				}
+			})
+		}
+
 	}
 }

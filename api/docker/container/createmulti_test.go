@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/docker/docker/api/types"
 	. "github.com/docker/docker/api/types/container"
 	"github.com/docker/go-connections/nat"
 )
@@ -56,11 +55,6 @@ func TestCreateMultiple(t *testing.T) {
 
 	for _, container := range ssh {
 		t.Run("create container", func(t *testing.T) {
-			image := container.Config.Image
-			_, err := cli.ImagePull(ctx, image, types.ImagePullOptions{})
-			if err != nil {
-				t.Error(err)
-			}
 			id, err := container.CreateContainer(ctx, cli)
 			fmt.Println(id)
 			if err != nil {
