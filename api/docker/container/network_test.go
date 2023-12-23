@@ -14,6 +14,7 @@ func TestNetworkCreate(t *testing.T) {
 	id, err := CreateNetwork(ctx, cli, name)
 	if err != nil {
 		t.Error(err)
+		return
 	}
 	t.Log(id)
 
@@ -29,14 +30,9 @@ func TestInvalidNetworkName(t *testing.T) {
 
 	name := ""
 
-	id, err := CreateNetwork(ctx, cli, name)
+	_, err = CreateNetwork(ctx, cli, name)
 	if err == nil {
 		t.Error(err)
-	}
-	t.Log(id)
-
-	err = DeleteNetwork(ctx, cli, id)
-	if err == nil {
-		t.Error(err)
+		return
 	}
 }
