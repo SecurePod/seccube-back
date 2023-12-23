@@ -17,7 +17,7 @@ var (
 		NewContainerWithConfig(
 			&container.Config{
 				Tty:   true,
-				Image: "httpd",
+				Image: "httpd:latest",
 			},
 			&container.HostConfig{
 				AutoRemove: true,
