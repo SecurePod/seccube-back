@@ -31,19 +31,15 @@ func NewContainerWithConfig(config *container.Config, hostConfig *container.Host
 }
 
 type ContainerInformation struct {
-	ID           string
-	ExposedPort  int
-	InternalPort int
-	Ip           string
-	Label        string
+	ID             string   `json:"id"`
+	ContainerIP    string   `json:"containerIp"`
+	HostPorts      []uint16 `json:"hostPort"`
+	ContainerPorts []uint16 `json:"containerPort"`
+	Labels         []string `json:"label"`
 }
 
-func NewContainerInformation(ID string, ExposedPort int, InternalPort int, Ip string, Label string) *ContainerInformation {
+func NewContainerInformation(id string) *ContainerInformation {
 	return &ContainerInformation{
-		ID:           ID,
-		ExposedPort:  ExposedPort,
-		InternalPort: InternalPort,
-		Ip:           Ip,
-		Label:        Label,
+		ID: id,
 	}
 }
