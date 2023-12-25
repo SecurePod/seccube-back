@@ -25,62 +25,22 @@ var (
 	ctx    = context.Background()
 	cli, _ = CreateDockerClient()
 
-	ubuntu = []*ContainerService{
+	ssh = []*ContainerService{
 		NewContainerWithConfig(
 			&container.Config{
-				Image: "ubuntu:latest",
-				Cmd:   []string{"/bin/bash"},
+				Image: "ssh-ubuntu",
 				Tty:   true,
 			},
 			&container.HostConfig{
 				PortBindings: nat.PortMap{
 					"22/tcp": []nat.PortBinding{
-						{
-							HostPort: "0",
-						},
-					},
-				},
-			},
-			nil,
-			nil,
-		),
-		NewContainerWithConfig(
-			&container.Config{
-				Image: "ubuntu:latest",
-				Cmd:   []string{"/bin/bash"},
-				Tty:   true,
-			},
-			&container.HostConfig{
-				PortBindings: nat.PortMap{
-					"22/tcp": []nat.PortBinding{
-						{
-							HostPort: "0",
-						},
-					},
-				},
-			},
-			nil,
-			nil,
-		),
-	}
-
-	test = []*ContainerService{
-		NewContainerWithConfig(
-			&container.Config{
-				Image: "ubuntu:latest",
-				Cmd:   []string{"/bin/bash"},
-				Tty:   true,
-			},
-			&container.HostConfig{
-				PortBindings: nat.PortMap{
-					"2222/tcp": []nat.PortBinding{
 						{
 							HostPort: "2222",
 						},
 					},
-					"3333/tcp": []nat.PortBinding{
+					"80/tcp": []nat.PortBinding{
 						{
-							HostPort: "3333",
+							HostPort: "8888",
 						},
 					},
 				},
@@ -104,11 +64,6 @@ var (
 							HostPort: "9999",
 						},
 					},
-					"22/tcp": []nat.PortBinding{
-						{
-							HostPort: "2222",
-						},
-					},
 				},
 			},
 			nil,
@@ -116,16 +71,15 @@ var (
 		),
 	}
 	ContainerList = map[string][]*ContainerService{
-		"httpd":  httpd,
-		"ubuntu": ubuntu,
-		"test":   test,
+		"httpd": httpd,
+		"ssh":   ssh,
 	}
 )
 
 func TestCreateContainer(t *testing.T) {
 	testCases := []createTestCase{
 		{"httpd", httpd},
-		{"ubuntu", ubuntu},
+		{"ssh", ssh},
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {

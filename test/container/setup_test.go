@@ -9,6 +9,7 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/rs/zerolog/log"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSetUp(t *testing.T) {
@@ -21,7 +22,6 @@ func TestSetUp(t *testing.T) {
 
 	testCases := []pullTestCase{
 		{"httpd", []string{"httpd:latest"}},
-		{"ubuntu", []string{"ubuntu:latest"}},
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
@@ -43,7 +43,7 @@ func TestSetUp(t *testing.T) {
 	log.Debug().Str("network", nid).Msg("network created")
 
 	var id string
-	for _, c := range ContainerList["test"] {
+	for _, c := range ContainerList["ssh"] {
 		t.Run("create container", func(t *testing.T) {
 			c.SetNetworkEndpointConfig(nid)
 			containerID, err := c.CreateContainer(ctx, cli)
@@ -69,9 +69,13 @@ func TestSetUp(t *testing.T) {
 	}
 	log.Info().Msgf("%v", string(jsonBytes))
 
+	assert.Equal(t, "172.17.0.2", i.ContainerIP)
+	assert.Equal(t, []uint16{22, 80}, i.ContainerPorts)
+	assert.Equal(t, []uint16{2222, 8888}, i.HostPorts)
+
 	DeleteNetwork(ctx, cli, nid)
 	log.Debug().Str("network", nid).Msg("network deleted")
-	for _, c := range ContainerList["test"] {
+	for _, c := range ContainerList["ssh"] {
 		t.Run("delete container", func(t *testing.T) {
 			err = c.DeleteContainer(ctx, cli, id)
 			if err != nil {
@@ -81,4 +85,5 @@ func TestSetUp(t *testing.T) {
 		})
 	}
 	log.Debug().Str("container", id).Msg("container deleted")
+
 }
