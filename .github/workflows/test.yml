@@ -20,6 +20,6 @@ jobs:
       - name: Get dependencies
         run: go get -v -t -d ./...
       - name: Setup Test
-        run: go test -v ./... -run TestPull
+        run: go test ./... -run TestSetUp
       - name: Test
-        run: go test -v ./...
+        run: go test -v ./... ./test
