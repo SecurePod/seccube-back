@@ -2,6 +2,7 @@ package container
 
 import (
 	"context"
+	"docker-api/utils"
 	"testing"
 
 	"github.com/docker/docker/api/types"
@@ -13,6 +14,82 @@ import (
 var (
 	ctx    = context.Background()
 	cli, _ = CreateDockerClient()
+
+	ubuntu = []*ContainerService{
+		NewContainerWithConfig(
+			&container.Config{
+				Image: "ubuntu:latest",
+				Cmd:   []string{"/bin/bash"},
+				Tty:   true,
+			},
+			&container.HostConfig{
+				PortBindings: nat.PortMap{
+					"22/tcp": []nat.PortBinding{
+						{
+							HostPort: "0",
+						},
+					},
+				},
+			},
+			nil,
+			nil,
+		),
+		NewContainerWithConfig(
+			&container.Config{
+				Image: "ubuntu:latest",
+				Cmd:   []string{"/bin/bash"},
+				Tty:   true,
+			},
+			&container.HostConfig{
+				PortBindings: nat.PortMap{
+					"22/tcp": []nat.PortBinding{
+						{
+							HostPort: "0",
+						},
+					},
+				},
+			},
+			nil,
+			nil,
+		),
+	}
+
+	ssh = []*ContainerService{
+		NewContainerWithConfig(
+			&container.Config{
+				Image: "ssh-ubuntu",
+				Tty:   true,
+			},
+			&container.HostConfig{
+				PortBindings: nat.PortMap{
+					"22/tcp": []nat.PortBinding{
+						{
+							HostPort: "0",
+						},
+					},
+				},
+			},
+			nil,
+			nil,
+		),
+		NewContainerWithConfig(
+			&container.Config{
+				Image: "ssh-ubuntu",
+				Tty:   true,
+			},
+			&container.HostConfig{
+				PortBindings: nat.PortMap{
+					"22/tcp": []nat.PortBinding{
+						{
+							HostPort: "0",
+						},
+					},
+				},
+			},
+			nil,
+			nil,
+		),
+	}
 
 	httpd = []*ContainerService{
 		NewContainerWithConfig(
@@ -30,13 +107,6 @@ var (
 					},
 				},
 			},
-			// &network.NetworkingConfig{
-			// 	EndpointsConfig: map[string]*network.EndpointSettings{
-			// 		"NetworkIDConfig": {
-			// 			NetworkID: "NetworkID",
-			// 		},
-			// 	},
-			// },
 			nil,
 			nil,
 		),
@@ -44,7 +114,8 @@ var (
 
 	ContainerList = map[string][]*ContainerService{
 		"httpd":  httpd,
-		"ubuntu": ssh,
+		"ubuntu": ubuntu,
+		"ssh":    ssh,
 	}
 )
 
@@ -80,6 +151,20 @@ func TestCreate(t *testing.T) {
 				}
 			})
 		}
+	}
+}
 
+func TestCreateWithNetwork(t *testing.T) {
+	nid := utils.GenerateUUID()
+	for _, c := range ContainerList["ubuntu"] {
+		t.Run("create container", func(t *testing.T) {
+			c.SetNetworkEndpointConfig(nid)
+			id, err := c.CreateContainer(ctx, cli)
+			if err != nil {
+				t.Error(err)
+				return
+			}
+			t.Log(id)
+		})
 	}
 }
