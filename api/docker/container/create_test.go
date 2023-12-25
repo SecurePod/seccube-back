@@ -29,6 +29,11 @@ var (
 							HostPort: "0",
 						},
 					},
+					"2222/tcp": []nat.PortBinding{
+						{
+							HostPort: "2222",
+						},
+					},
 				},
 			},
 			nil,
@@ -95,7 +100,7 @@ var (
 		NewContainerWithConfig(
 			&container.Config{
 				Tty:   true,
-				Image: "ubuntu:latest",
+				Image: "httpd:latest",
 			},
 			&container.HostConfig{
 				AutoRemove: true,
@@ -103,6 +108,11 @@ var (
 					"80/tcp": []nat.PortBinding{
 						{
 							HostPort: "0",
+						},
+					},
+					"2222/tcp": []nat.PortBinding{
+						{
+							HostPort: "2222",
 						},
 					},
 				},
