@@ -6,6 +6,7 @@ require github.com/rs/zerolog v1.31.0
 
 require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
+	github.com/google/uuid v1.5.0 // indirect
 	github.com/labstack/gommon v0.4.2 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
