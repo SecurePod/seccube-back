@@ -3,50 +3,6 @@ package container
 import (
 	"context"
 	"testing"
-
-	. "github.com/docker/docker/api/types/container"
-	"github.com/docker/go-connections/nat"
-)
-
-var (
-	ssh = []*ContainerService{
-		NewContainerWithConfig(
-			&Config{
-				Image: "ubuntu:latest",
-				Cmd:   []string{"/bin/bash"},
-				Tty:   true,
-			},
-			&HostConfig{
-				PortBindings: nat.PortMap{
-					"22/tcp": []nat.PortBinding{
-						{
-							HostPort: "0",
-						},
-					},
-				},
-			},
-			nil,
-			nil,
-		),
-		NewContainerWithConfig(
-			&Config{
-				Image: "ubuntu:latest",
-				Cmd:   []string{"/bin/bash"},
-				Tty:   true,
-			},
-			&HostConfig{
-				PortBindings: nat.PortMap{
-					"22/tcp": []nat.PortBinding{
-						{
-							HostPort: "0",
-						},
-					},
-				},
-			},
-			nil,
-			nil,
-		),
-	}
 )
 
 func TestCreateMultiple(t *testing.T) {
