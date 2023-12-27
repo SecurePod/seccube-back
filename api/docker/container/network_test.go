@@ -7,6 +7,10 @@ import (
 
 func TestNetworkCreate(t *testing.T) {
 	cli, err := CreateDockerClient()
+	if err != nil {
+		t.Error(err)
+		return
+	}
 	ctx := context.Background()
 
 	name := "test"
@@ -26,6 +30,10 @@ func TestNetworkCreate(t *testing.T) {
 
 func TestInvalidNetworkName(t *testing.T) {
 	cli, err := CreateDockerClient()
+	if err != nil {
+		t.Error(err)
+		return
+	}
 	ctx := context.Background()
 
 	name := ""
