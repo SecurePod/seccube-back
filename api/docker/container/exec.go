@@ -9,17 +9,29 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func (c *ContainerService) CreateExecResponse(ctx context.Context, cli *client.Client, id string) (res types.HijackedResponse, err error) {
+type CmdExecuter struct {
+	Id  string   `json:"id"`
+	Cmd []string `json:"cmd"`
+}
+
+func NewCmdExecuter(id string, cmd []string) *CmdExecuter {
+	return &CmdExecuter{
+		Id:  id,
+		Cmd: cmd,
+	}
+}
+
+func (c *CmdExecuter) CreateExecResponse(ctx context.Context, cli *client.Client) (res types.HijackedResponse, err error) {
 
 	config := types.ExecConfig{
 		AttachStdin:  true,
 		AttachStdout: true,
 		AttachStderr: true,
 		Tty:          true,
-		Cmd:          []string{"/bin/bash"},
+		Cmd:          c.Cmd,
 	}
 
-	execId, err := cli.ContainerExecCreate(ctx, id, config)
+	execId, err := cli.ContainerExecCreate(ctx, c.Id, config)
 	if err != nil {
 		return res, errors.Wrap(err, "create exec error")
 	}
@@ -33,7 +45,7 @@ func (c *ContainerService) CreateExecResponse(ctx context.Context, cli *client.C
 	if err != nil {
 		return res, errors.Wrap(err, "exec attach error")
 	}
-	log.Debug().Str("container", id).Msg("exec attached")
+	log.Debug().Str("container", c.Id).Msg("exec attached")
 
 	return res, nil
 }

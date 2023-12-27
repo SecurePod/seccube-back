@@ -25,7 +25,6 @@ func WsHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	c := container.NewContainerWithConfig(nil, nil, nil, nil)
 	sub := strings.TrimPrefix(r.URL.Path, "/web-socket/ssh")
 	_, id := filepath.Split(sub)
 	fmt.Println(id)
@@ -40,7 +39,9 @@ func WsHandler(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	res, err := c.CreateExecResponse(ctx, cli, id)
+	c := container.NewCmdExecuter(id, []string{"/bin/bash"})
+
+	res, err := c.CreateExecResponse(ctx, cli)
 	if err != nil {
 		log.Println(err)
 		return
