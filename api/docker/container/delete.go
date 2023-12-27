@@ -16,7 +16,7 @@ func (c *ContainerService) DeleteContainer(ctx context.Context, cli *client.Clie
 		return errors.Wrap(err, "stop container error")
 	}
 
-	if c.HostConfig.AutoRemove != true {
+	if !c.HostConfig.AutoRemove {
 		err = cli.ContainerRemove(ctx, id, types.ContainerRemoveOptions{})
 		if err != nil {
 			return errors.Wrap(err, "remove container error")
