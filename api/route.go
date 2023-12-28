@@ -24,4 +24,6 @@ func Run() {
 	{
 		docker.InitRoute(e)
 	}
+
+	e.Logger.Fatal(e.Start(":" + port))
 }
