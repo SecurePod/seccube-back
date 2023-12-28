@@ -11,6 +11,7 @@ func InitRoute(e *echo.Echo) {
 
 	{
 		d.POST("/create", handler.Create)
+		d.POST("/inspect", handler.Inspect)
 	}
 
 }
