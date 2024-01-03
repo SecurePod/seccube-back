@@ -8,9 +8,12 @@ import (
 )
 
 func TestCreate(t *testing.T) {
-	r := httptest.NewRequest("POST", "/api/v1/docker/create", nil)
+	e := echo.New()
+	e.POST("/api/v1/docker/create/:tag", Create)
+
+	r := httptest.NewRequest("POST", "/api/v1/docker/create/sshBrute", nil)
 	w := httptest.NewRecorder()
-	c := echo.New().NewContext(r, w)
+	c := e.NewContext(r, w)
 
 	if err := Create(c); err != nil {
 		t.Error(err)

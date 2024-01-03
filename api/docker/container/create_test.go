@@ -122,10 +122,46 @@ var (
 		),
 	}
 
+	ctf = []*ContainerService{
+		NewContainerWithConfig(
+			&container.Config{
+				Image: "build-db",
+			},
+			&container.HostConfig{
+				PortBindings: nat.PortMap{
+					"3306/tcp": []nat.PortBinding{
+						{
+							HostPort: "20002",
+						},
+					},
+				},
+			},
+			nil,
+			nil,
+		),
+		NewContainerWithConfig(
+			&container.Config{
+				Image: "build-app",
+			},
+			&container.HostConfig{
+				PortBindings: nat.PortMap{
+					"80/tcp": []nat.PortBinding{
+						{
+							HostPort: "0",
+						},
+					},
+				},
+			},
+			nil,
+			nil,
+		),
+	}
+
 	ContainerList = map[string][]*ContainerService{
 		"httpd":  httpd,
 		"ubuntu": ubuntu,
 		"ssh":    ssh,
+		"ctf":    ctf,
 	}
 )
 
@@ -166,7 +202,13 @@ func TestCreate(t *testing.T) {
 
 func TestCreateWithNetwork(t *testing.T) {
 	nid := utils.GenerateUUID()
-	for _, c := range ContainerList["ubuntu"] {
+	var err error
+	_, err = CreateNetwork(ctx, cli, nid)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	for _, c := range ContainerList["ctf"] {
 		t.Run("create container", func(t *testing.T) {
 			c.SetNetworkEndpointConfig(nid)
 			id, err := c.CreateContainer(ctx, cli)
