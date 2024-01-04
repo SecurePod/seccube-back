@@ -8,6 +8,7 @@ import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/go-connections/nat"
 	"github.com/labstack/echo/v4"
+	"github.com/rs/zerolog/log"
 )
 
 var (
@@ -62,13 +63,15 @@ func Create(c echo.Context) error {
 	var ids []map[string]string
 
 	nid := utils.GenerateUUID()
-	_, err = docker.CreateNetwork(ctx, cli, nid)
+	nid, err = docker.CreateNetwork(ctx, cli, nid)
 	if err != nil {
 		return err
 	}
+	log.Debug().Str("network", nid).Msg("network created")
 
 	for _, container := range ContainerList[tag] {
 		container.SetNetworkEndpointConfig(nid)
+		log.Debug().Str("network", nid).Msg("network attached")
 		id, err := container.CreateContainer(ctx, cli)
 		if err != nil {
 			return err
