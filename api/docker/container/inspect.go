@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/docker/docker/client"
+	"github.com/rs/zerolog/log"
 )
 
 func (i *ContainerInformation) SetContainerInformation(ctx context.Context, cli *client.Client) error {
@@ -13,7 +14,15 @@ func (i *ContainerInformation) SetContainerInformation(ctx context.Context, cli 
 	if err != nil {
 		return err
 	}
-	i.ContainerIP = info.NetworkSettings.IPAddress
+	for networkName, endpointSettings := range info.NetworkSettings.Networks {
+		if endpointSettings != nil {
+			ipAddress := endpointSettings.IPAddress
+			log.Debug().Str("container", i.ID).Str("network", networkName).Str("ip", ipAddress).Msg("container ip")
+			i.ContainerIP = ipAddress
+		}
+	}
+
+	log.Printf("%v", info.NetworkSettings.Ports)
 
 	for port := range info.NetworkSettings.Ports {
 		portStr := port.Port()
