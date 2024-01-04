@@ -21,8 +21,7 @@ func CreateNetwork(ctx context.Context, cli *client.Client, name string) (nid st
 	if err != nil {
 		return "", errors.Wrap(err, "create network error")
 	}
-	nid = res.ID
-	return nid, nil
+	return res.ID, nil
 }
 
 func (c *ContainerService) SetNetworkEndpointConfig(name string) {
@@ -31,7 +30,10 @@ func (c *ContainerService) SetNetworkEndpointConfig(name string) {
 			EndpointsConfig: make(map[string]*network.EndpointSettings),
 		}
 	}
-	c.NetworkingConfig.EndpointsConfig[name] = &network.EndpointSettings{}
+
+	c.NetworkingConfig.EndpointsConfig = map[string]*network.EndpointSettings{
+		name: {},
+	}
 }
 
 func DeleteNetwork(ctx context.Context, cli *client.Client, nid string) error {
