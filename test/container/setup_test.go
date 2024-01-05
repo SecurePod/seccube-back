@@ -5,6 +5,7 @@ import (
 )
 
 func TestSetUp(t *testing.T) {
+	TestPull(t)
 	// cli, err := CreateDockerClient()
 	// if err != nil {
 	// 	t.Fatalf("Failed to create Docker client: %v", err)
