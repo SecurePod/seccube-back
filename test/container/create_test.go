@@ -5,39 +5,22 @@ import (
 	"testing"
 
 	. "docker-api/api/docker/container"
+	"docker-api/utils"
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/go-connections/nat"
-	"github.com/rs/zerolog/log"
 )
 
-type pullTestCase struct {
-	name   string
-	images []string
-}
-
-type createTestCase struct {
-	name       string
-	containers []*ContainerService
-}
-
 var (
-	ctx    = context.Background()
-	cli, _ = CreateDockerClient()
-
-	ssh = []*ContainerService{
+	httpd = []*ContainerService{
 		NewContainerWithConfig(
 			&container.Config{
-				Image: "ssh-ubuntu",
 				Tty:   true,
+				Image: "httpd:latest",
 			},
 			&container.HostConfig{
+				AutoRemove: true,
 				PortBindings: nat.PortMap{
-					"22/tcp": []nat.PortBinding{
-						{
-							HostPort: "2222",
-						},
-					},
 					"80/tcp": []nat.PortBinding{
 						{
 							HostPort: "8888",
@@ -48,9 +31,6 @@ var (
 			nil,
 			nil,
 		),
-	}
-
-	httpd = []*ContainerService{
 		NewContainerWithConfig(
 			&container.Config{
 				Tty:   true,
@@ -72,30 +52,78 @@ var (
 	}
 	ContainerList = map[string][]*ContainerService{
 		"httpd": httpd,
-		"ssh":   ssh,
+		"fail":  nil,
 	}
 )
 
 func TestCreateContainer(t *testing.T) {
-	testCases := []createTestCase{
-		{"httpd", httpd},
-		{"ssh", ssh},
+	cli, err := CreateDockerClient()
+	if err != nil {
+		t.Fatalf("Failed to create Docker client: %v", err)
 	}
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			for _, c := range tc.containers {
+	ctx := context.Background()
+
+	cases := map[string]struct {
+		name      string
+		expectErr bool
+	}{
+		"success": {"httpd", false},
+		"fail":    {"fail", true},
+	}
+
+	for name, tc := range cases {
+		t.Run(name, func(t *testing.T) {
+			for _, c := range ContainerList[tc.name] {
 				id, err := c.CreateContainer(ctx, cli)
-				if err != nil {
-					t.Error(err)
-					continue
+				if (err != nil) != tc.expectErr {
+					t.Errorf("CreateContainer() error = %v, expectErr %v", err, tc.expectErr)
+					return
 				}
-				log.Debug().Str("container", *id).Msg("container created")
-				t.Log(id)
-				err = c.DeleteContainer(ctx, cli, *id)
-				if err != nil {
-					t.Error(err)
+				if !tc.expectErr {
+					c.DeleteContainer(ctx, cli, *id)
 				}
-				log.Debug().Str("container", *id).Msg("container deleted")
+			}
+		})
+	}
+}
+
+func TestCreateContainerWithNetwork(t *testing.T) {
+	cli, err := CreateDockerClient()
+	if err != nil {
+		t.Fatalf("Failed to create Docker client: %v", err)
+	}
+	ctx := context.Background()
+
+	cases := map[string]struct {
+		name      string
+		expectErr bool
+	}{
+		"first":  {"httpd", false},
+		"second": {"httpd", false},
+		"fail":   {"fail", true},
+	}
+	uuid := utils.GenerateUUID()
+
+	nid, err := CreateNetwork(ctx, cli, uuid)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	defer DeleteNetwork(ctx, cli, nid)
+
+	for name, tc := range cases {
+		t.Run(name, func(t *testing.T) {
+
+			for _, c := range ContainerList[tc.name] {
+				c.SetNetworkEndpointConfig(nid)
+				id, err := c.CreateContainer(ctx, cli)
+				if (err != nil) != tc.expectErr {
+					t.Errorf("CreateContainer() error = %v, expectErr %v", err, tc.expectErr)
+					return
+				}
+				if !tc.expectErr {
+					c.DeleteContainer(ctx, cli, *id)
+				}
 			}
 		})
 	}
