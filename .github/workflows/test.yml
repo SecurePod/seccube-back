@@ -21,7 +21,7 @@ jobs:
         run: go get -v -t -d ./...
       - name: build docker image
         run: docker build -t ssh-ubuntu ./test/resources
+      - name: Setup Test
+        run: go test ./... -v -run TestSetUp
       - name: Test
-        run: |
-          go test ./... -v -run TestSetUp
-          go test -v ./test/...
+        run: go test -v ./test/...
