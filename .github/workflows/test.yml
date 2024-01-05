@@ -24,4 +24,4 @@ jobs:
       - name: Setup Test
         run: go test ./... -v -run TestSetUp
       - name: Test
-        run: go test ./... -v  ./test
+        run: go test -v ./test
