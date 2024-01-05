@@ -7,10 +7,8 @@ import (
 	. "docker-api/api/docker/container"
 	"docker-api/utils"
 
-	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/go-connections/nat"
-	"github.com/rs/zerolog/log"
 )
 
 var (
@@ -76,11 +74,6 @@ func TestCreateContainer(t *testing.T) {
 	for name, tc := range cases {
 		t.Run(name, func(t *testing.T) {
 			for _, c := range ContainerList[tc.name] {
-				_, err = cli.ImagePull(ctx, c.Config.Image, types.ImagePullOptions{})
-				log.Debug().Str("image", c.Config.Image).Msg("image pulled")
-				if (err != nil) != tc.expectErr {
-					t.Errorf("ImagePull() error = %v, expectErr %v", err, tc.expectErr)
-				}
 				id, err := c.CreateContainer(ctx, cli)
 				if (err != nil) != tc.expectErr {
 					t.Errorf("CreateContainer() error = %v, expectErr %v", err, tc.expectErr)
