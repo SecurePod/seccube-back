@@ -45,7 +45,7 @@ func TestInspect(t *testing.T) {
 		}
 		assert.NotEmpty(t, con.ContainerIP)
 		log.Debug().Str("ip", con.ContainerIP).Msg("container ip")
-		for i := 0; i <= len(con.HostPorts)-1; i++ {
+		for i := 0; i <= len(c.HostConfig.PortBindings)-1; i++ {
 			log.Debug().Str("port", strconv.Itoa(int(con.HostPorts[i]))).Msg("container port")
 			assert.Equal(t, c.HostConfig.PortBindings["80/tcp"][i].HostPort, strconv.Itoa(int(con.HostPorts[i])))
 		}
