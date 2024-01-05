@@ -190,7 +190,7 @@ func TestCreate(t *testing.T) {
 					return
 				}
 				t.Log(id)
-				err = c.DeleteContainer(ctx, cli, *id)
+				err = DeleteContainer(ctx, cli, *id)
 				if err != nil {
 					t.Error(err)
 					return

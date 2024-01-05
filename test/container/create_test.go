@@ -80,7 +80,7 @@ func TestCreateContainer(t *testing.T) {
 					return
 				}
 				if !tc.expectErr {
-					c.DeleteContainer(ctx, cli, *id)
+					DeleteContainer(ctx, cli, *id)
 				}
 			}
 		})
@@ -122,7 +122,7 @@ func TestCreateContainerWithNetwork(t *testing.T) {
 					return
 				}
 				if !tc.expectErr {
-					c.DeleteContainer(ctx, cli, *id)
+					DeleteContainer(ctx, cli, *id)
 				}
 			}
 		})
