@@ -15,7 +15,8 @@ var (
 	ssh = []*docker.ContainerService{
 		docker.NewContainerWithConfig(
 			&container.Config{
-				Image: "ssh-attack:latest",
+				Image: "sx-attack:latest",
+				Tty:   true,
 			},
 			&container.HostConfig{
 				PortBindings: nat.PortMap{
@@ -31,7 +32,7 @@ var (
 		),
 		docker.NewContainerWithConfig(
 			&container.Config{
-				Image: "ssh-def:latest",
+				Image: "sx-defense:latest",
 			},
 			&container.HostConfig{
 				PortBindings: nat.PortMap{
@@ -46,8 +47,37 @@ var (
 			nil,
 		),
 	}
+
+	sqli = []*docker.ContainerService{
+		docker.NewContainerWithConfig(
+			&container.Config{
+				Image: "sqli-app:latest",
+			},
+			&container.HostConfig{
+				PortBindings: nat.PortMap{
+					"80/tcp": []nat.PortBinding{
+						{
+							HostPort: "0",
+						},
+					},
+				},
+			},
+			nil,
+			nil,
+		),
+		docker.NewContainerWithConfig(
+			&container.Config{
+				Image: "sqli-db:latest",
+			},
+			nil,
+			nil,
+			nil,
+		),
+	}
+
 	ContainerList = map[string][]*docker.ContainerService{
 		"sshBrute": ssh,
+		"sqli":     sqli,
 	}
 )
 
@@ -70,8 +100,14 @@ func Create(c echo.Context) error {
 	log.Debug().Str("network", nid).Msg("network created")
 
 	for _, container := range ContainerList[tag] {
-		container.SetNetworkEndpointConfig(nid)
+
+		if tag == "sqli" {
+			container.SetNetworkEndpointConfigWithAlias(nid)
+		} else {
+			container.SetNetworkEndpointConfig(nid)
+		}
 		log.Debug().Str("network", nid).Msg("network attached")
+
 		id, err := container.CreateContainer(ctx, cli)
 		if err != nil {
 			return err

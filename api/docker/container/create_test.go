@@ -59,6 +59,33 @@ var (
 		),
 	}
 
+	sqli = []*ContainerService{
+		NewContainerWithConfig(
+			&container.Config{
+				Image: "sqli-app:latest",
+			},
+			&container.HostConfig{
+				PortBindings: nat.PortMap{
+					"80/tcp": []nat.PortBinding{
+						{
+							HostPort: "0",
+						},
+					},
+				},
+			},
+			nil,
+			nil,
+		),
+		NewContainerWithConfig(
+			&container.Config{
+				Image: "sqli-db:latest",
+			},
+			nil,
+			nil,
+			nil,
+		),
+	}
+
 	ssh = []*ContainerService{
 		NewContainerWithConfig(
 			&container.Config{
@@ -162,6 +189,7 @@ var (
 		"ubuntu": ubuntu,
 		"ssh":    ssh,
 		"ctf":    ctf,
+		"sqli":   sqli,
 	}
 )
 
@@ -208,9 +236,13 @@ func TestCreateWithNetwork(t *testing.T) {
 		t.Error(err)
 		return
 	}
-	for _, c := range ContainerList["ctf"] {
+	for _, c := range ContainerList["sqli"] {
 		t.Run("create container", func(t *testing.T) {
-			c.SetNetworkEndpointConfig(nid)
+			if c.Config.Image == "sqli-db:latest" {
+				c.SetNetworkEndpointConfigWithAlias(nid)
+			} else {
+				c.SetNetworkEndpointConfig(nid)
+			}
 			id, err := c.CreateContainer(ctx, cli)
 			if err != nil {
 				t.Error(err)

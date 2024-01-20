@@ -16,6 +16,7 @@ func CreateNetwork(ctx context.Context, cli *client.Client, name string) (nid st
 		types.NetworkCreate{
 			CheckDuplicate: true,
 			Driver:         "bridge",
+			Internal:       true,
 		},
 	)
 	if err != nil {
@@ -33,6 +34,20 @@ func (c *ContainerService) SetNetworkEndpointConfig(name string) {
 
 	c.NetworkingConfig.EndpointsConfig = map[string]*network.EndpointSettings{
 		name: {},
+	}
+}
+
+func (c *ContainerService) SetNetworkEndpointConfigWithAlias(name string) {
+	if c.NetworkingConfig == nil {
+		c.NetworkingConfig = &network.NetworkingConfig{
+			EndpointsConfig: make(map[string]*network.EndpointSettings),
+		}
+	}
+
+	c.NetworkingConfig.EndpointsConfig = map[string]*network.EndpointSettings{
+		name: {
+			Aliases: []string{"db"},
+		},
 	}
 }
 
