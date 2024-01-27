@@ -19,6 +19,7 @@ var (
 				Tty:   true,
 			},
 			&container.HostConfig{
+				AutoRemove: true,
 				PortBindings: nat.PortMap{
 					"22/tcp": []nat.PortBinding{
 						{
@@ -35,6 +36,7 @@ var (
 				Image: "sx-defense:latest",
 			},
 			&container.HostConfig{
+				AutoRemove: true,
 				PortBindings: nat.PortMap{
 					"22/tcp": []nat.PortBinding{
 						{

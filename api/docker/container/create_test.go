@@ -23,6 +23,9 @@ var (
 				Tty:   true,
 			},
 			&container.HostConfig{
+				Resources: container.Resources{
+					Memory: 512 * 1024 * 1024,
+				},
 				PortBindings: nat.PortMap{
 					"22/tcp": []nat.PortBinding{
 						{
