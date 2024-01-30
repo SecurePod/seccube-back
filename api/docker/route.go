@@ -14,4 +14,6 @@ func InitRoute(e *echo.Echo) {
 		d.POST("/inspect", handler.Inspect)
 	}
 
+	e.GET("/web-socket/ssh/:id", handler.WsHandler)
+
 }
