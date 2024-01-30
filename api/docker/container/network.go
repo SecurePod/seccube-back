@@ -2,6 +2,8 @@ package container
 
 import (
 	"context"
+	"fmt"
+	"time"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/network"
@@ -21,6 +23,12 @@ func CreateNetwork(ctx context.Context, cli *client.Client, name string) (nid st
 	if err != nil {
 		return "", errors.Wrap(err, "create network error")
 	}
+	ctx2 := context.Background()
+	time.AfterFunc(time.Minute*40, func() {
+		if err := DeleteContainer(ctx2, cli, name); err != nil {
+			fmt.Println(err)
+		}
+	})
 	return res.ID, nil
 }
 

@@ -2,6 +2,8 @@ package container
 
 import (
 	"context"
+	"fmt"
+	"time"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
@@ -28,6 +30,14 @@ func (c *ContainerService) CreateContainer(ctx context.Context, cli *client.Clie
 		return nil, errors.Wrap(err, "start container error")
 	}
 	log.Debug().Str("container", create.ID).Msg("container started")
+
+	// コンテナを削除する処理
+	ctx2 := context.Background()
+	time.AfterFunc(time.Minute*30, func() {
+		if err := DeleteContainer(ctx2, cli, create.ID); err != nil {
+			fmt.Println(err)
+		}
+	})
 
 	return &create.ID, nil
 
