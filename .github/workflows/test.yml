@@ -22,4 +22,6 @@ jobs:
       - name: Test Setup
         run: docker pull httpd:latest
       - name: Test
-        run: go test -v ./test/...
+        run: go test -v ./test/... -coverprofile=coverage.out
+      - name: report coverage
+        uses: k1LoW/octocov-action@v0
