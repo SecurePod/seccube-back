@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  server:
+    build:
+      args:
+        - target=deploy
+    restart: always
+    ports:
+      - "8081:8081"
+    privileged: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
