@@ -4,11 +4,10 @@ services:
   server:
     build:
       args:
-        - target=dev
+        - target=deploy
     restart: always
     ports:
       - "8081:8081"
     privileged: true
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - .:/app

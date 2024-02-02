@@ -2,15 +2,25 @@ FROM golang:1.21-alpine as builder
 
 WORKDIR /app/
 
-COPY go.mod ./
-COPY go.sum ./
+COPY go.mod go.sum ./
 RUN go mod download
+
 COPY . .
-RUN go build -o main .
+RUN go build -trimpath -ldflags "-w -s" -o app
+# ---------------------------------------------------
+FROM debian:bullseye-slim as deploy
 
-FROM alpine:latest
+RUN apt-get update
 
-WORKDIR /app/
-COPY --from=builder /app/main /app
-RUN chmod +X main
-CMD ["./main"]
+COPY --from=deploy-builder /app/app .
+
+CMD ["./app"]
+
+FROM golang:1.21.3 as dev
+WORKDIR /app
+RUN go install github.com/cosmtrek/air@latest
+CMD ["air"]
+
+
+
+
