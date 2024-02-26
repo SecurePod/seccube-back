@@ -1,8 +1,9 @@
 package handler
 
 import (
-	"docker-api/api/docker/container"
 	"log"
+
+	"github.com/malsuke/seccube-back/api/docker/container"
 
 	"github.com/labstack/echo/v4"
 )

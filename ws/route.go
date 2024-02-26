@@ -1,9 +1,10 @@
 package ws
 
 import (
-	"docker-api/ws/handler"
 	"log"
 	"net/http"
+
+	"github.com/malsuke/seccube-back/ws/handler"
 )
 
 var (

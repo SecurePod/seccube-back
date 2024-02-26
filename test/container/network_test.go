@@ -2,8 +2,9 @@ package test
 
 import (
 	"context"
-	. "docker-api/api/docker/container"
 	"testing"
+
+	. "github.com/malsuke/seccube-back/api/docker/container"
 
 	"github.com/rs/zerolog/log"
 )

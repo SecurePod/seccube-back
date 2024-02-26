@@ -1,7 +1,7 @@
 package api
 
 import (
-	"docker-api/api/docker"
+	"github.com/malsuke/seccube-back/api/docker"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"

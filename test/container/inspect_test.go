@@ -2,10 +2,11 @@ package test
 
 import (
 	"context"
-	. "docker-api/api/docker/container"
-	"docker-api/utils"
 	"strconv"
 	"testing"
+
+	. "github.com/malsuke/seccube-back/api/docker/container"
+	"github.com/malsuke/seccube-back/utils"
 
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"

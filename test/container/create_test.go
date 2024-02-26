@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	. "docker-api/api/docker/container"
-	"docker-api/utils"
+	. "github.com/malsuke/seccube-back/api/docker/container"
+	"github.com/malsuke/seccube-back/utils"
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/go-connections/nat"

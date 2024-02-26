@@ -1,9 +1,10 @@
 package test
 
 import (
-	. "docker-api/utils"
 	"strings"
 	"testing"
+
+	. "github.com/malsuke/seccube-back/utils"
 )
 
 func TestGenerateUUID(t *testing.T) {

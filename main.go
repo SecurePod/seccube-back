@@ -1,7 +1,7 @@
 package main
 
 import (
-	"docker-api/api"
+	"github.com/malsuke/seccube-back/api"
 )
 
 func main() {

@@ -2,8 +2,9 @@ package container
 
 import (
 	"context"
-	"docker-api/utils"
 	"testing"
+
+	"github.com/malsuke/seccube-back/utils"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"

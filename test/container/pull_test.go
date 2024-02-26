@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	. "docker-api/api/docker/container"
+	. "github.com/malsuke/seccube-back/api/docker/container"
 
 	"github.com/docker/docker/api/types"
 	"github.com/rs/zerolog/log"
