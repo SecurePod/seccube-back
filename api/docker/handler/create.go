@@ -1,12 +1,12 @@
 package handler
 
 import (
-	docker "docker-api/api/docker/container"
-	"docker-api/utils"
 	"log/slog"
 
+	docker "github.com/malsuke/seccube-back/api/docker/container"
+	"github.com/malsuke/seccube-back/utils"
+
 	"github.com/docker/docker/api/types/container"
-	"github.com/docker/go-connections/nat"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
 )
@@ -15,15 +15,20 @@ var (
 	ssh = []*docker.ContainerService{
 		docker.NewContainerWithConfig(
 			&container.Config{
-				Image: "ssh-attack:latest",
+				Image: "password-crack-attack:latest",
+				Tty:   true,
 			},
 			&container.HostConfig{
-				PortBindings: nat.PortMap{
-					"22/tcp": []nat.PortBinding{
-						{
-							HostPort: "0",
-						},
-					},
+				AutoRemove: true,
+				// PortBindings: nat.PortMap{
+				// 	"22/tcp": []nat.PortBinding{
+				// 		{
+				// 			HostPort: "0",
+				// 		},
+				// 	},
+				// },
+				Resources: container.Resources{
+					Memory: 1024 * 1024 * 1024,
 				},
 			},
 			nil,
@@ -31,15 +36,20 @@ var (
 		),
 		docker.NewContainerWithConfig(
 			&container.Config{
-				Image: "ssh-def:latest",
+				Image: "password-crack-defense:latest",
+				Tty:   true,
 			},
 			&container.HostConfig{
-				PortBindings: nat.PortMap{
-					"22/tcp": []nat.PortBinding{
-						{
-							HostPort: "0",
-						},
-					},
+				AutoRemove: true,
+				// PortBindings: nat.PortMap{
+				// 	"22/tcp": []nat.PortBinding{
+				// 		{
+				// 			HostPort: "0",
+				// 		},
+				// 	},
+				// },
+				Resources: container.Resources{
+					Memory: 1024 * 1024 * 1024,
 				},
 			},
 			nil,
@@ -70,6 +80,11 @@ func Create(c echo.Context) error {
 	log.Debug().Str("network", nid).Msg("network created")
 
 	for _, container := range ContainerList[tag] {
+		if tag == "sqli" {
+			container.SetNetworkEndpointConfigWithAlias(nid)
+		} else {
+			container.SetNetworkEndpointConfig(nid)
+		}
 		container.SetNetworkEndpointConfig(nid)
 		log.Debug().Str("network", nid).Msg("network attached")
 		id, err := container.CreateContainer(ctx, cli)

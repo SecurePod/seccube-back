@@ -44,6 +44,19 @@ func (c *ContainerService) SetNetworkEndpointConfig(name string) {
 	}
 }
 
+func (c *ContainerService) SetNetworkEndpointConfigWithAlias(name string) {
+	if c.NetworkingConfig == nil {
+		c.NetworkingConfig = &network.NetworkingConfig{
+			EndpointsConfig: make(map[string]*network.EndpointSettings),
+		}
+	}
+	c.NetworkingConfig.EndpointsConfig = map[string]*network.EndpointSettings{
+		name: {
+			Aliases: []string{"db"},
+		},
+	}
+}
+
 func DeleteNetwork(ctx context.Context, cli *client.Client, nid string) error {
 	err := cli.NetworkRemove(ctx, nid)
 	if err != nil {
