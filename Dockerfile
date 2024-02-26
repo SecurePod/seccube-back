@@ -12,11 +12,11 @@ FROM debian:bullseye-slim as deploy
 
 RUN apt-get update
 
-COPY --from=deploy-builder /app/app .
+COPY --from=builder /app/app .
 
 CMD ["./app"]
 
-FROM golang:1.21.3 as dev
+FROM golang:1.22 as dev
 WORKDIR /app
 RUN go install github.com/cosmtrek/air@latest
 CMD ["air"]
