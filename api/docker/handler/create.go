@@ -124,7 +124,6 @@ func Create(c echo.Context) error {
 		} else {
 			container.SetNetworkEndpointConfig(nid)
 		}
-		container.SetNetworkEndpointConfig(nid)
 		log.Debug().Str("network", nid).Msg("network attached")
 		id, err := container.CreateContainer(ctx, cli)
 		if err != nil {
