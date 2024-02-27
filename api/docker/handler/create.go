@@ -7,6 +7,7 @@ import (
 	"github.com/malsuke/seccube-back/utils"
 
 	"github.com/docker/docker/api/types/container"
+	"github.com/docker/go-connections/nat"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
 )
@@ -56,8 +57,46 @@ var (
 			nil,
 		),
 	}
+
+	sqli = []*docker.ContainerService{
+		docker.NewContainerWithConfig(
+			&container.Config{
+				Image: "sqli-app:latest",
+			},
+			&container.HostConfig{
+				PortBindings: nat.PortMap{
+					"80/tcp": []nat.PortBinding{
+						{
+							HostPort: "0",
+						},
+					},
+				},
+				AutoRemove: true,
+				Resources: container.Resources{
+					Memory: 1024 * 1024 * 1024,
+				},
+			},
+			nil,
+			nil,
+		),
+		docker.NewContainerWithConfig(
+			&container.Config{
+				Image: "sqli-db:latest",
+			},
+			&container.HostConfig{
+				AutoRemove: true,
+				Resources: container.Resources{
+					Memory: 1024 * 1024 * 1024,
+				},
+			},
+			nil,
+			nil,
+		),
+	}
+
 	ContainerList = map[string][]*docker.ContainerService{
 		"sshBrute": ssh,
+		"sqli":     sqli,
 	}
 )
 
