@@ -16,7 +16,6 @@ type WriteRequest struct {
 }
 
 func Write(ctx context.Context, cli *client.Client, r WriteRequest) error {
-
 	config := types.ExecConfig{
 		AttachStdin:  true,
 		AttachStdout: true,
