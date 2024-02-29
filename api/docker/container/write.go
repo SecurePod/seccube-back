@@ -10,9 +10,9 @@ import (
 )
 
 type WriteRequest struct {
-	Code        string `json:"code"`
-	Path        string `json:"path"`
-	ContainerId string `json:"id"`
+	Code string `json:"code"`
+	Path string `json:"path"`
+	Id   string `json:"id"`
 }
 
 func Write(ctx context.Context, cli *client.Client, r WriteRequest) error {
@@ -24,7 +24,7 @@ func Write(ctx context.Context, cli *client.Client, r WriteRequest) error {
 		Cmd:          []string{"/bin/bash", "-c", fmt.Sprintf("cat << 'EOF' > %s\n%s\nEOF\n", r.Path, r.Code)},
 	}
 
-	exec, err := cli.ContainerExecCreate(ctx, r.ContainerId, config)
+	exec, err := cli.ContainerExecCreate(ctx, r.Id, config)
 	if err != nil {
 		return errors.Wrap(err, "Unable to create exec")
 	}
