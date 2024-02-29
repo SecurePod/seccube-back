@@ -94,9 +94,34 @@ var (
 		),
 	}
 
+	cli = []*docker.ContainerService{
+		docker.NewContainerWithConfig(
+			&container.Config{
+				Image: "cli:latest",
+				Tty:   true,
+			},
+			&container.HostConfig{
+				PortBindings: nat.PortMap{
+					"6080/tcp": []nat.PortBinding{
+						{
+							HostPort: "0",
+						},
+					},
+				},
+				AutoRemove: true,
+				Resources: container.Resources{
+					Memory: 1024 * 1024 * 1024,
+				},
+			},
+			nil,
+			nil,
+		),
+	}
+
 	ContainerList = map[string][]*docker.ContainerService{
 		"sshBrute": ssh,
 		"sqli":     sqli,
+		"cli":      cli,
 	}
 )
 
