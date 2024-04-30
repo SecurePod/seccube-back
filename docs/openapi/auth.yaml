@@ -1,0 +1,179 @@
+openapi: 3.0.0
+info:
+  title: Authentication API with Google
+  version: "1.0"
+servers:
+  - url: https://your-domain.com/api/auth
+paths:
+  /register:
+    post:
+      summary: ユーザー登録
+      operationId: register
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+              required:
+                - email
+                - password
+      responses:
+        "200":
+          description: ユーザー登録成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "400":
+          description: リクエストが不正
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: エラーメッセージ
+        "409":
+          description: ユーザーが既に存在
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: エラーメッセージ
+  /login:
+    post:
+      summary: ログイン
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+              required:
+                - email
+                - password
+      responses:
+        "200":
+          description: ログイン成功
+          headers:
+            Authorization:
+              description: JWTトークン
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  jwt:
+                    type: string
+                required:
+                  - jwt
+              examples:
+                authenticatedUser:
+                  value:
+                    {
+                      jwt: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiZW1haWwiOiJqb2huLmRvZUBleGFtcGxlLmNvbSIsImV4cCI6MTYxNTIzMzYwMH0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+                    }
+        "400":
+          description: リクエストが不正
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: エラーメッセージ
+        "401":
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: 認証失敗の詳細メッセージ
+  /session:
+    get:
+      summary: ログイン後のセッション情報を取得
+      operationId: getSession
+      responses:
+        "200":
+          description: 新しいセッションを返却
+          headers:
+            Authorization:
+              description: JWTトークン
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  jwt:
+                    type: string
+                required:
+                  - jwt
+              examples:
+                authenticatedUser:
+                  value:
+                    {
+                      jwt: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiZW1haWwiOiJqb2huLmRvZUBleGFtcGxlLmNvbSIsImV4cCI6MTYxNTIzMzYwMH0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+                    }
+        "400":
+          description: Invalid request.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Detailed error message.
+              examples:
+                invalidRequest:
+                  value:
+                    {
+                      error: "Invalid request. Please provide a valid jwt token",
+                    }
+        "401":
+          description: Unauthorized request due to invalid JWT.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Detailed error message regarding authorization failure.
+              examples:
+                unauthorizedRequest:
+                  value:
+                    {
+                      error: "Unauthorized request. Please provide a valid jwt token",
+                    }
