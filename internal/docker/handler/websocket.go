@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/malsuke/seccube-back/api/docker/container"
+	"github.com/malsuke/seccube-back/internal/docker/container"
 
 	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v4"

@@ -3,7 +3,7 @@ package handler
 import (
 	"log/slog"
 
-	docker "github.com/malsuke/seccube-back/api/docker/container"
+	docker "github.com/malsuke/seccube-back/internal/docker/container"
 	"github.com/malsuke/seccube-back/utils"
 
 	"github.com/docker/docker/api/types/container"

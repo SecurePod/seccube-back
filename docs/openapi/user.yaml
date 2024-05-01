@@ -1,0 +1,112 @@
+openapi: 3.0.0
+info:
+  title: api
+  version: 1.0.0
+servers:
+  - url: "https://api.dev.local/api/v1/user"
+paths:
+  /health:
+    post:
+      summary: apiのヘルスチェック
+      responses:
+        "200":
+          description: apiが正常に動作している
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+        "500":
+          description: apiが正常に動作していない
+        "503":
+          description: nginxがapiにリクエストを転送できない。apiが停止している可能性がある。
+  /env/create:
+    post:
+      summary: 演習環境を作成
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/ContainerInformation"
+      responses:
+        "200":
+          description: コンテナ情報リストを返却
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ContainerInformation"
+        "500":
+          description: サーバーエラー
+  /env/reset:
+    post:
+      summary: 演習環境をリセット (createと同じ動作)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/ContainerInformation"
+      responses:
+        "200":
+          description: コンテナ情報リストを返却
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ContainerInformation"
+
+  /web-socket/ssh/{id}:
+    get:
+      summary: SSH用にコンテナへのWebSocket接続を確立します。
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "101":
+          description: WebSocket接続が確立されました。
+components:
+  schemas:
+    EnvInfoCreate:
+      type: object
+      properties:
+        course:
+          type: string
+          description: コース名
+        number:
+          type: integer
+          format: int32
+          description: 演習番号
+    EnvInfoGet:
+      type: object
+      properties:
+        ID:
+          type: string
+          description: コンテナのID
+        ContainerIP:
+          type: string
+          description: コンテナのIPアドレス
+        HostPorts:
+          type: array
+          items:
+            type: integer
+            format: uint16
+          description: ホスト側のポート番号のリスト
+        ContainerPorts:
+          type: array
+          items:
+            type: integer
+            format: uint16
+          description: コンテナ側のポート番号のリスト

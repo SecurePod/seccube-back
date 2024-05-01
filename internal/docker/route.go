@@ -1,7 +1,7 @@
 package docker
 
 import (
-	"github.com/malsuke/seccube-back/api/docker/handler"
+	"github.com/malsuke/seccube-back/internal/docker/handler"
 
 	"github.com/labstack/echo/v4"
 )

@@ -1,24 +1,18 @@
-.PHONY: help build build-local up down logs ps test
-.DEFAULT_GOAL := help
+.PHONY: build-local codegen
 
-build-local: ## Build docker image to local development
-	docker compose build --no-cache
+build-local:
+	docker compose up -d --build
 
-up: ## Do docker compose up with hot reload
-	docker compose up -d
+OPENAPI_DOCS_DIR := docs/openapi
+OPENAPI_OUTPUT_DIR := api
 
-down: ## Do docker compose down
-	docker compose down
+YAML_FILES := $(wildcard $(OPENAPI_DOCS_DIR)/*.yaml)
 
-logs: ## Tail docker compose logs
-	docker compose logs -f
-
-ps: ## Check container status
-	docker compose ps
-
-test: ## Execute tests
-	go test -race -shuffle=on ./...
-
-help: ## Show options
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
-		awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
+# openapiの*.yamlからapi/*/gen/*.gen.goを生成
+codegen:
+	@for file in $(YAML_FILES); do \
+		dir=$$(dirname $$file | sed 's|$(OPENAPI_DOCS_DIR)|$(OPENAPI_OUTPUT_DIR)|'); \
+		base=$$(basename $$file .yaml); \
+		mkdir -p $$dir/$$base/gen; \
+		oapi-codegen -package gen $$file > $$dir/$$base/gen/$$base.gen.go; \
+	done
