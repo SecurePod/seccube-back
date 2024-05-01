@@ -13,9 +13,9 @@ func TestWrite(t *testing.T) {
 	}
 
 	r := &WriteRequest{
-		Code:        "dwadadwadawdwadawdad",
-		Path:        "./index.php",
-		ContainerId: "812d6b143ff7",
+		Code: "dwadadwadawdwadawdad",
+		Path: "./index.php",
+		Id:   "812d6b143ff7",
 	}
 
 	err = Write(context.Background(), cli, *r)

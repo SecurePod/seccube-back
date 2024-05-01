@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/malsuke/seccube-back/api/docker"
+	"github.com/malsuke/seccube-back/api/auth"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -22,7 +22,7 @@ func Run() {
 	})
 
 	{
-		docker.InitRoute(e)
+		auth.InitRoute(e)
 	}
 
 	e.Logger.Fatal(e.Start(":" + port))

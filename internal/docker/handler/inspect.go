@@ -3,7 +3,7 @@ package handler
 import (
 	"log"
 
-	"github.com/malsuke/seccube-back/api/docker/container"
+	"github.com/malsuke/seccube-back/internal/docker/container"
 
 	"github.com/labstack/echo/v4"
 )

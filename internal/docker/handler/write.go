@@ -2,7 +2,7 @@ package handler
 
 import (
 	"github.com/labstack/echo/v4"
-	"github.com/malsuke/seccube-back/api/docker/container"
+	"github.com/malsuke/seccube-back/internal/docker/container"
 )
 
 func Write(c echo.Context) error {
